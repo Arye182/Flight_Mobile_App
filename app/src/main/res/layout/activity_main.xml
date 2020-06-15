@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="myViewModel"
+            type="com.example.flightmobileapp.viewmodel.ConnectionViewModel" />
+    </data>
+
+
+<androidx.appcompat.widget.LinearLayoutCompat
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/connections_recycle_view"
+        android:layout_margin="5dp"/>
+
+    <EditText
+        android:id="@+id/connection_url_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="15dp"
+        android:layout_marginBottom="5dp"
+        android:ems="10"
+        android:text="@={myViewModel.inputUrl}"
+        android:hint="Connection Url"
+        android:inputType="textPersonName"
+        android:textStyle="bold" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/connect_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@={myViewModel.connectButtonText}"
+            android:onClick="@{()->myViewModel.connect()}"
+            android:textStyle="bold" />
+
+
+
+        <Button
+            android:id="@+id/clear_connections_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@={myViewModel.clearAllButtonText}"
+            android:onClick="@{()->myViewModel.clearAll()}"
+            android:textStyle="bold" />
+
+
+
+
+    </LinearLayout>
+
+</androidx.appcompat.widget.LinearLayoutCompat>
+</layout>
