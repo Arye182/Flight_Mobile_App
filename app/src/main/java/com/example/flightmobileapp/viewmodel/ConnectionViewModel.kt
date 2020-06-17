@@ -1,25 +1,25 @@
 package com.example.flightmobileapp.viewmodel
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.flightmobileapp.Event
 import com.example.flightmobileapp.model.ConnectionEntity
 import com.example.flightmobileapp.model.ConnectionRepository
-import kotlinx.coroutines.launch
-import java.time.LocalDateTime
+import kotlinx.coroutines.*
+
 
 class ConnectionViewModel (private val repository: ConnectionRepository) : ViewModel(), Observable {
 
     val connections = repository.connections
+    private var isDelete = false
+    private lateinit var connectionToDelete : ConnectionEntity
 
     @Bindable
     val inputUrl = MutableLiveData<String>()
-//    val inputDate = MutableLiveData<String>()
-//    val inputSuccess = MutableLiveData<Boolean>()
 
     @Bindable
     val connectButtonText = MutableLiveData<String>()
@@ -27,43 +27,57 @@ class ConnectionViewModel (private val repository: ConnectionRepository) : ViewM
     @Bindable
     val clearAllButtonText = MutableLiveData<String>()
 
+    // this is the status that always changes
+    private val statusMessage = MutableLiveData<Event<String>>()
+    val message : LiveData<Event<String>>
+        get() = statusMessage
+
+    // this is another event that fired when connection success and need to move to the next activity
+    private val shouldStartActivity = MutableLiveData<Event<Boolean>>()
+    val shouldStartActivityFlag : LiveData<Event<Boolean>>
+        get() = shouldStartActivity
+
     init {
         connectButtonText.value = "Connect"
-        clearAllButtonText.value = "Clear Connections"
+        clearAllButtonText.value = "Clear All"
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
-    fun connect() {
-        val url : String = inputUrl.value!!
-        // Current date and time
-        val dateTime : String = LocalDateTime.now().toString()
-        val success : Boolean = connectServer(url)
-        insert (ConnectionEntity(0, url, dateTime, success))
+    // insert new connection to DataBase
+    private fun insert(connection: ConnectionEntity) = viewModelScope.launch {
+        val newRowId: Long = repository.insert(connection)
+        if (newRowId > -1) {
+            statusMessage.value = Event("Connection Inserted Successfully $newRowId")
+        } else {
+            statusMessage.value = Event("Error Occurred")
+        }
+    }
+
+    private fun delete(connection: ConnectionEntity) = viewModelScope.launch {
+        val noOfRowsDeleted = repository.delete(connection)
+        if (noOfRowsDeleted >0) {
         inputUrl.value = null
+        isDelete = false
+        clearAllButtonText.value = "Clear All"
+        statusMessage.value = Event("$noOfRowsDeleted Connection Has Been Removed From DataBase")
+        } else {
+            statusMessage.value = Event("Error Deleting!")
+        }
     }
 
-    fun clearAll() {
-        clearAll()
+    private fun deleteAll() = viewModelScope.launch {
+        val noOfRowsDeleted : Int = repository.deleteAll()
+        if (noOfRowsDeleted>0) {
+            statusMessage.value = Event("$noOfRowsDeleted Connections Have Been Removed From DataBase")
+        } else {
+            statusMessage.value = Event("Error Deleting All Connections!")
+        }
     }
 
-    fun connectServer(url : String) : Boolean{
-        return true
-    }
-
-    fun insert(connection: ConnectionEntity) = viewModelScope.launch {
-            repository.insert(connection)
-    }
-
-    fun update(connection: ConnectionEntity) = viewModelScope.launch {
-        repository.update(connection)
-    }
-
-    fun delete(connection: ConnectionEntity) = viewModelScope.launch {
-        repository.delete(connection)
-    }
-
-    fun deleteAll() = viewModelScope.launch {
-        repository.deleteAll()
+    fun initDelete (connection: ConnectionEntity) {
+        inputUrl.value = connection.url
+        isDelete = true
+        connectionToDelete = connection
+        clearAllButtonText.value = "Delete"
     }
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
@@ -72,6 +86,34 @@ class ConnectionViewModel (private val repository: ConnectionRepository) : ViewM
 
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
+    }
+
+
+     fun connect() {
+            if (inputUrl.value==null){
+                    statusMessage.value = Event("Please Enter URL To Connect!")
+            } else {
+                val url: String = inputUrl.value!!
+                val success: Boolean = connectServer(url)
+                insert(ConnectionEntity(id = 0, url = url, success = success))
+                inputUrl.value = null
+                clearAllButtonText.value = "Clear All"
+                shouldStartActivity.value = Event(true)
+
+                // TODO - add method that moves the user to the next screen - if success is true!
+            }
+    }
+
+    fun clearAllOrDelete() {
+        if (isDelete) {
+            delete(connectionToDelete)
+        } else {
+            deleteAll()
+        }
+    }
+
+    fun connectServer(url : String) : Boolean{
+        return true
     }
 
 }

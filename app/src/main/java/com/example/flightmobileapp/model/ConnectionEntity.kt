@@ -15,7 +15,7 @@ data class ConnectionEntity (
     val url: String,
 
     @ColumnInfo(name = "connection_date")
-    val date: String,
+    val date: Long = System.currentTimeMillis(),
 
     @ColumnInfo(name = "connection_success_or_fail")
     val success: Boolean

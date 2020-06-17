@@ -4,19 +4,15 @@ class ConnectionRepository (private val dao : ConnectionDAO){
 
     val connections = dao.getAllConnections()
 
-    suspend fun insert (connection: ConnectionEntity){
-        dao.insertConnection(connection);
+    suspend fun insert (connection: ConnectionEntity) : Long{
+        return dao.insertConnection(connection)
     }
 
-    suspend fun update (connection: ConnectionEntity){
-        dao.updateConnection(connection)
+    suspend fun delete (connection: ConnectionEntity) : Int{
+       return dao.deleteConnection(connection)
     }
 
-    suspend fun delete (connection: ConnectionEntity){
-        dao.deleteConnection(connection)
-    }
-
-    suspend fun deleteAll() {
-        dao.deleteAllConnections()
+    suspend fun deleteAll() : Int {
+        return dao.deleteAllConnections()
     }
 }

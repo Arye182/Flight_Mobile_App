@@ -12,63 +12,93 @@
     </data>
 
 
-<androidx.appcompat.widget.LinearLayoutCompat
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_margin="15dp"
-    android:orientation="vertical"
-    tools:context=".MainActivity">
-
-
-    <androidx.recyclerview.widget.RecyclerView
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/linearLayoutCompat"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/connections_recycle_view"
-        android:layout_margin="5dp"/>
-
-    <EditText
-        android:id="@+id/connection_url_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_margin="15dp"
-        android:layout_marginBottom="5dp"
-        android:ems="10"
-        android:text="@={myViewModel.inputUrl}"
-        android:hint="Connection Url"
-        android:inputType="textPersonName"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="@+id/connect_button"
+        app:layout_constraintStart_toEndOf="@+id/connect_button"
+        tools:context=".view.LoginActivity">
 
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/connect_button"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@={myViewModel.connectButtonText}"
-            android:onClick="@{()->myViewModel.connect()}"
-            android:textStyle="bold" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/connections_recycle_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scrollbars="vertical"
+                app:layout_constrainedHeight="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-        <Button
-            android:id="@+id/clear_connections_button"
-            android:layout_width="wrap_content"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@color/cardview_light_background"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@={myViewModel.clearAllButtonText}"
-            android:onClick="@{()->myViewModel.clearAll()}"
-            android:textStyle="bold" />
+            android:elevation="@dimen/cardview_default_elevation"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <Button
+                android:id="@+id/connect_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->myViewModel.connect()}"
+                android:text="@={myViewModel.connectButtonText}"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/clear_connections_button"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_conversion_absoluteHeight="48dp"
+                tools:layout_conversion_absoluteWidth="191dp" />
+
+            <Button
+                android:id="@+id/clear_connections_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:onClick="@{()->myViewModel.clearAllOrDelete()}"
+                android:text="@={myViewModel.clearAllButtonText}"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/connect_button"
+                tools:layout_conversion_absoluteHeight="48dp"
+                tools:layout_conversion_absoluteWidth="191dp" />
+
+            <EditText
+                android:id="@+id/connection_url_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/cardview_light_background"
+                android:ems="10"
+                android:hint="Connection Url"
+                android:inputType="textPersonName"
+                android:text="@={myViewModel.inputUrl}"
+                android:textSize="25sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@+id/connect_button"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:layout_conversion_absoluteHeight="45dp"
+                tools:layout_conversion_absoluteWidth="352dp" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
 
-
-    </LinearLayout>
-
-</androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

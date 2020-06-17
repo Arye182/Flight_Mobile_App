@@ -2,6 +2,7 @@ package com.example.flightmobileapp.model
 
 import androidx.lifecycle.LiveData
 import androidx.room.*
+import com.example.flightmobileapp.model.*
 
 @Dao
 interface ConnectionDAO {
@@ -9,19 +10,13 @@ interface ConnectionDAO {
     @Insert
     suspend fun insertConnection(connection: ConnectionEntity) : Long
 
-    @Update
-    suspend fun updateConnection(connection: ConnectionEntity)
-
     @Delete
-    suspend fun deleteConnection(connection: ConnectionEntity)
+    suspend fun deleteConnection(connection: ConnectionEntity) : Int
 
     @Query("DELETE FROM  connections_data_table")
-    suspend fun deleteAllConnections()
+    suspend fun deleteAllConnections() : Int
 
-    @Query("SELECT * FROM connections_data_table")
+    @Query("SELECT * FROM connections_data_table ORDER BY connection_date DESC LIMIT 5")
     fun getAllConnections(): LiveData<List<ConnectionEntity>>
-
-
-
 
 }
