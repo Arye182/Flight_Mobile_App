@@ -70,7 +70,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun listItemClicked(connection: ConnectionEntity){
-        connectionViewModel.inputUrl.value = connection.url
+        //connectionViewModel.inputUrl.value = connection.url
         connectionViewModel.initDelete(connection)
     }
 }

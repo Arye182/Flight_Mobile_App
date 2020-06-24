@@ -15,32 +15,62 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-
-
     <!-- joystick !-->
-
-
-    <!-- image !-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:background="#80CBC4"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@id/screen_divider"
-        app:layout_constraintVertical_bias="0.0">
+        app:layout_constraintTop_toBottomOf="@id/screen_divider">
+
+
+
         <!-- the joystick itself elevator and aileron !-->
-        <com.example.flightmobileapp.view.JoystickView
-            android:id="@+id/joystick"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"
+        <io.github.controlwear.virtual.joystick.android.JoystickView
+            android:id="@+id/my_joystick"
+            xmlns:custom="http://schemas.android.com/apk/res-auto"
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            custom:JV_buttonColor="#FF6E40"
+            custom:JV_buttonSizeRatio="25%"
+            custom:JV_borderColor="#00796B"
+            custom:JV_backgroundColor="#009688"
+            custom:JV_borderWidth="4dp"
+            custom:JV_fixedCenter="true"
+            app:JV_backgroundSizeRatio="80%"
             app:layout_constraintBottom_toTopOf="@id/joy_bottom"
             app:layout_constraintEnd_toStartOf="@+id/joy_right"
             app:layout_constraintStart_toStartOf="@+id/joy_left"
-            app:layout_constraintTop_toTopOf="@id/joy_top" />
+            app:layout_constraintTop_toBottomOf="@id/joy_top" />
+
+        <TextView
+            android:id="@+id/textView_angle_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@={controlViewModel.aileron}"
+            app:layout_constraintBottom_toTopOf="@+id/joy_top"
+            app:layout_constraintStart_toStartOf="@+id/joy_right" />
+
+        <TextView
+            android:id="@+id/textView_strength_left"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@={controlViewModel.elevator}"
+            app:layout_constraintStart_toStartOf="@+id/joy_right"
+            app:layout_constraintTop_toBottomOf="@id/joy_top" />
+
+
+
+
+
+
+
+
+
+
+
 
         <!-- slider - rudder !-->
         <SeekBar
@@ -48,9 +78,10 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:max="100"
-            android:min="0"
+            android:min="-100"
+            android:progress="0"
+            android:onProgressChanged="@{(seekBar, progress, fromUser) -> controlViewModel.updateRudder(progress)}"
             android:elevation="15dp"
-
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/joy_right"
             app:layout_constraintStart_toStartOf="@id/joy_left"
@@ -59,39 +90,63 @@
             android:id="@+id/rudder_slider_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@={controlViewModel.rudder}"
             android:textSize="22sp"
-            android:text="0.0"
-
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/slider_rudder_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/rudder_slider"
             app:layout_constraintTop_toTopOf="@+id/joy_bottom" />
+        <TextView
+            android:id="@+id/slider_rudder_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Rudder"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@id/joy_right" />
 
         <!-- slider - throttle !-->
         <SeekBar
             android:id="@+id/throttle_slider"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:rotation="-90"
-            android:translationX="-165dp"
-            android:translationY="-145dp"
-            android:max="100"
-            android:min="0"
+            android:contentDescription="throttle"
             android:elevation="15dp"
+            android:max="100"
+            android:onProgressChanged="@{(seekBar, progress, fromUser) -> controlViewModel.updateThrottle(progress)}"
+            android:rotation="-90"
+            android:translationX="-155dp"
+            android:translationY="-135dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="@id/joy_right"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/joy_left"
-            app:layout_constraintTop_toTopOf="@id/joy_bottom" />
+            app:layout_constraintTop_toTopOf="@id/joy_bottom"
+            app:layout_constraintVertical_bias="0.0" />
         <TextView
             android:id="@+id/throttle_slider_value"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="@={controlViewModel.throttle}"
             android:textSize="22sp"
-            android:text="0.0"
-            app:layout_constraintBottom_toTopOf="@+id/joy_top"
+            app:layout_constraintBottom_toTopOf="@+id/throttle_slider_title"
             app:layout_constraintEnd_toStartOf="@+id/joy_left"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+        <TextView
+            android:id="@+id/throttle_slider_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Throttle"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/joy_top"
+            app:layout_constraintEnd_toStartOf="@+id/joy_left"
+            app:layout_constraintStart_toStartOf="parent" />
 
 
         <!-- joyBottom !-->
@@ -100,36 +155,41 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="20dp"
-            app:layout_constraintGuide_percent="0.8" />
+            app:layout_constraintGuide_percent="0.75" />
         <!-- joyTop !-->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/joy_top"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_begin="20dp"
-            app:layout_constraintGuide_percent="0.2" />
+            app:layout_constraintGuide_percent="0.25" />
         <!-- joyLeft !-->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/joy_left"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp"
-            app:layout_constraintGuide_percent="0.2" />
+            app:layout_constraintGuide_percent="0.25" />
         <!-- joyRight !-->
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/joy_right"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_begin="20dp"
-            app:layout_constraintGuide_percent="0.8" />
-
-
+            app:layout_constraintGuide_percent="0.75" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <!-- screen divider !-->
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/screen_divider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.5" />
+
+
+    <!-- theImage !-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -138,7 +198,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
-
         <ImageView
             android:id="@+id/simpleImageView"
             android:layout_width="fill_parent"
@@ -151,15 +210,5 @@
             app:layout_constraintTop_toTopOf="parent"
             android:contentDescription="the plan" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    <!-- screen divider !-->
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/screen_divider"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.5" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

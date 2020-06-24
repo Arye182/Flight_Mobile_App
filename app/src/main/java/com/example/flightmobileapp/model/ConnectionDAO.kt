@@ -16,7 +16,6 @@ interface ConnectionDAO {
     @Query("DELETE FROM  connections_data_table")
     suspend fun deleteAllConnections() : Int
 
-    @Query("SELECT * FROM connections_data_table ORDER BY connection_date DESC LIMIT 5")
+    @Query("SELECT * FROM connections_data_table  GROUP BY connection_url HAVING MAX(connection_date) ORDER BY connection_date DESC LIMIT 5")
     fun getAllConnections(): LiveData<List<ConnectionEntity>>
-
 }
